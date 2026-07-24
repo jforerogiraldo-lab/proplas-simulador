@@ -1517,7 +1517,7 @@ function recalc() {
     wrap.innerHTML='<div class="empty">Agregue productos para simular el embarque</div>';
   } else {
     const uLbl=meth==='estibado'?'Pallets':'CBM';
-    let html=`<table class="pt"><thead><tr><th>Producto</th><th>Cantidad</th><th>Cajas</th><th>${uLbl}</th><th>Peso kg</th><th>EXW USD</th><th>% Cont.</th><th>¿Cabe?</th><th></th></tr></thead><tbody>`;
+    let html=`<table class="pt"><thead><tr><th>Producto</th><th>Cantidad</th><th>Cajas</th><th>${uLbl}</th><th>Peso kg</th><th>EXW ${state.currency==='USD'?'USD':state.currency==='COP'?'COP':state.customSymbol}</th><th>% Cont.</th><th>¿Cabe?</th><th></th></tr></thead><tbody>`;
     rows.forEach(({item,totalCajas,totalCbm,totalPal,totalPeso,pct,exwUsd})=>{
       const u=meth==='estibado'?totalPal:totalCbm.toFixed(2);
       const fit=pct<=1?'<span class="fit-y">SÍ CABE</span>':pct<=1.1?'<span class="fit-w">AJUSTADO</span>':'<span class="fit-n">NO CABE</span>';
