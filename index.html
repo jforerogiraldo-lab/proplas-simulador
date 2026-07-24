@@ -1502,7 +1502,7 @@ function recalc() {
   const fobTotal  = inlandUsd + puertoUsd + agencUsd + otrosUsd;
   const seguro    = d ? totalExwUsd*(d.seguro||0.005) : 0;
   const fleteUsd  = d ? (cont==='20'?d.teu:d.feu) : 0;
-  const cifTotal  = totalExwUsd + fobTotal + seguro + fleteUsd;
+  const cifTotal  = fobTotal + seguro + fleteUsd;
   const delivery  = d ? (d.delivery||0) : 0;
   const mpf       = d ? totalExwUsd*(d.mpf||0.003464) : 0;
   const hmf       = d ? totalExwUsd*(d.hmf||0.00125) : 0;
@@ -2105,7 +2105,7 @@ function exportExcel() {
   const fobTotal  = inlandUsd+puertoUsd+agencUsd+otrosUsd;
   const seguro    = d?totalExwUsd*(d.seguro||0.005):0;
   const fleteUsd  = d?(cont==='20'?d.teu:d.feu):0;
-  const cifTotal  = totalExwUsd+fobTotal+seguro+fleteUsd;
+  const cifTotal  = fobTotal+seguro+fleteUsd;
   const delivery  = d?(d.delivery||0):0;
   const mpf       = d?totalExwUsd*(d.mpf||0.003464):0;
   const hmf       = d?totalExwUsd*(d.hmf||0.00125):0;
@@ -2236,7 +2236,7 @@ function exportPDF() {
   const fobTotal  = inlandUsd+puertoUsd+agencUsd+otrosUsd;
   const seguro    = d?totalExwUsd*(d.seguro||0.005):0;
   const fleteUsd  = d?(cont==='20'?d.teu:d.feu):0;
-  const cifTotal  = totalExwUsd+fobTotal+seguro+fleteUsd;
+  const cifTotal  = fobTotal+seguro+fleteUsd;
   const delivery  = d?(d.delivery||0):0;
   const mpf       = d?totalExwUsd*(d.mpf||0.003464):0;
   const hmf       = d?totalExwUsd*(d.hmf||0.00125):0;
