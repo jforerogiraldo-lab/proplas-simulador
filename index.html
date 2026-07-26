@@ -795,7 +795,7 @@ body {
 <body>
 
 <!-- AUTH SCREEN -->
-<div id="auth-screen">
+<div id="auth-screen" style="display:none;">
   <div class="auth-wrap">
     <div class="auth-card">
       <div class="auth-logo">
@@ -1488,6 +1488,51 @@ body {
   </div>
 </div>
 
+
+
+<script>
+// Firebase fallback — si el CDN de Firebase no carga (ej. modo offline)
+if (typeof firebase === 'undefined') {
+  console.warn('Firebase CDN no disponible — modo local sin persistencia.');
+  const _mockDb = {
+    collection: (col) => ({
+      doc: (id) => ({
+        get: async () => ({ exists: false, data: () => ({}) }),
+        set: async () => {},
+        collection: (sub) => ({
+          add: async () => ({ id: 'local_' + Date.now() }),
+          orderBy: () => ({
+            get: async () => ({ empty: true, forEach: () => {} }),
+            limit: () => ({ get: async () => ({ empty: true, forEach: () => {} }) }),
+          }),
+          doc: (id2) => ({
+            get: async () => ({ exists: false, data: () => ({}) }),
+            set: async () => {},
+            delete: async () => {},
+          }),
+        }),
+      }),
+    }),
+  };
+  const _mockAuth = {
+    currentUser: null,
+    languageCode: 'es',
+    onAuthStateChanged: (cb) => { setTimeout(() => cb(null), 100); return () => {}; },
+    signInWithEmailAndPassword: async () => { throw new Error('Sin conexión a Firebase'); },
+    createUserWithEmailAndPassword: async () => { throw new Error('Sin conexión a Firebase'); },
+    sendPasswordResetEmail: async () => { throw new Error('Sin conexión a Firebase'); },
+    confirmPasswordReset: async () => { throw new Error('Sin conexión a Firebase'); },
+    applyActionCode: async () => { throw new Error('Sin conexión a Firebase'); },
+    signOut: async () => {},
+  };
+  window.firebase = {
+    apps: ['mock'],
+    initializeApp: () => {},
+    auth: () => _mockAuth,
+    firestore: () => _mockDb,
+  };
+}
+</script>
 
 <script>
 // ══════════════════════════════════════════════════════════════════════
@@ -4105,45 +4150,9 @@ function exportOpPDF() {
 
 // ── Session check ──────────────────────────────────────────────────
 async function checkSession() {
-  // Check for Firebase oobCode in URL (password reset link)
-  const urlParams = new URLSearchParams(window.location.search);
-  const mode     = urlParams.get('mode');
-  const oobCode  = urlParams.get('oobCode');
-
-  if (mode === 'resetPassword' && oobCode) {
-    // Store code for use when saving new password
-    window._oobCode = oobCode;
-    await init();
-    showNewPasswordModal();
-    return;
-  }
-
-  if (mode === 'verifyEmail' && oobCode) {
-    try {
-      await _auth.applyActionCode(oobCode);
-      document.getElementById('auth-screen').style.display = 'flex';
-      showTab('login');
-      setTimeout(()=>setMsg('login-msg','¡Correo verificado! Ya puedes iniciar sesión.','success'), 100);
-    } catch(e) {
-      document.getElementById('auth-screen').style.display = 'flex';
-      showTab('login');
-      setTimeout(()=>setMsg('login-msg','El enlace de verificación no es válido o ya fue usado.','error'), 100);
-    }
-    await init();
-    return;
-  }
-
-  await new Promise(resolve => {
-    const unsub = _auth.onAuthStateChanged(user => {
-      unsub();
-      if(user && user.emailVerified) {
-        showApp(user);
-      } else {
-        document.getElementById('auth-screen').style.display = 'flex';
-      }
-      resolve();
-    });
-  });
+  // AUTH DESACTIVADO — modo desarrollo
+  const mockUser = { uid: 'dev', email: 'dev@proplas.com.co', displayName: 'Proplas Dev', emailVerified: true, updateProfile: async()=>{}, updatePassword: async()=>{} };
+  showApp(mockUser);
   await init();
 }
 
